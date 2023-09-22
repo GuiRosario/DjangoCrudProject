@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/157e9b5dbb.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+                /* Estilos para o modal */
+        .modal {
+            display: none;
+            z-index: 1;
+            left: 10;
+            top: 10;
+            width: 50%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 20% !important;
+            text-align: center;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilos para o botão dentro do modal */
+        .modal-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .aviso-b{
+            display: flex; /* Utiliza o flexbox para alinhar os botões horizontalmente */
+            justify-content: center; /* Centraliza os botões horizontalmente */
+            align-items: center; /* Centraliza os botões verticalmente (opcional) */
+            height: 5vh; /
+        }
+        .element{
+            margin: 10px;
+        }
+        body{
+            margin: 0;
+            
+        }
+        .list-group-item{
+            margin: 0;
+            padding: 0 !important;
+        }
+        .custom-background {
+            background-color: #ACCBE1;
+        }
+        .card-header{
+            display: flex;
+            justify-content: space-between;
+        }
+        .cordofundo {background-color: #7C98B3;}
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-in-out;
+        }
+        .showicon{
+            margin-right: 10px;
+        }
+        .expanded {
+            max-height: 200px; /* Ajuste a altura máxima conforme necessário */
+        }
+        ul {
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body class="custom-background">
+<div class="container-xl" style="padding-top: 30px; padding-bottom: 30px;">
+    <ul class="list-group">
+        <!-- Iterate over object_list -->
+        {% for object in object_list %}
+        <!-- Display Objects -->
+        <li>
+            <div id="meuModal{{object.id}}" class="modal">
+                <div class="modal-content">
+                    <p>Gostaria Mesmo de Deletar?</p>
+                    <div class="aviso-b">
+                        <button class="btn btn-danger" onclick=fecharModal({{object.id}})>Cancelar</button>
+                        <form class="element" method="POST" action="{% url 'crud:delete_view' object.id %}">
+                            {% csrf_token %}
+                            <input class="btn btn-success" type="submit" value="Confimar">
+                        </form>                 
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <i onclick=toggleCard({{object.id}}) class="fa-solid fa-circle-chevron-down showicon"></i>
+                        {{ object.title }}
+                    </div>
+                    <i onclick=mostrarModal({{object.id}}) class="fa-solid fa-trash" style="color: #c01c28;"></i>
+                </div>
+                <div class="card-content" id={{object.id}}>
+                    <div class="card-body">
+                        {{ object.description }}
+                    </div>
+                </div>
+            </div>
+            <!-- <a href="{% url 'crud:delete_view' object.id %}">delete</a> -->
+        </li>
+        <br>
+        {% empty %}
+        <li class="list-group-item" >No objects yet.</li>
+        {% endfor %}
+    </ul>
+
+    <form action="{% url 'crud:create_view' %}">
+        <button type="submit" class="btn btn-dark" value="Voltar ao Formulário">Retornar ao Formulário</button>
+    </form>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script>
+        function toggleCard(cardNumber) {
+            var cardContent = document.getElementById(cardNumber);
+            if (cardContent.classList.contains("expanded")) {
+                cardContent.classList.remove("expanded");
+            } else {
+                cardContent.classList.add("expanded");
+            }
+        }
+        // Função para mostrar o modal
+        function mostrarModal(Number) {
+            var meuModal = document.getElementById("meuModal" + Number);
+            meuModal.style.display = "block";
+        }
+
+        // Função para fechar o modal
+        function fecharModal(Number) {
+            var meuModal = document.getElementById("meuModal" + Number);
+            meuModal.style.display = "none";
+        }
+</script>
+</body>
+</html>
